@@ -1,0 +1,20 @@
+<html>
+<script id="2d-vertex-shader" type="notjs">
+  attribute vec4 a_position;
+
+  void main() {
+    gl_Position = a_position;
+  }
+
+</script>
+<script id="2d-fragment-shader" type="notjs">
+  //do some stuff//
+  precision mediump float;
+  void main() {
+    gl_FragColor = vec4(1, 0, 0.5, 1);
+  }
+</script>
+<body>
+  <canvas id="canvas"></canvas>
+</body>
+</html>
