@@ -1,72 +1,64 @@
 function main() {
-  // Get A WebGL context
-  var canvas = document.getElementById("canvas");
-  var gl = canvas.getContext("webgl");
-  if (!gl) {
-    return;
-  }
+  //global variables//
+  var gl,
+      canvas,
+      positionAttributeLocation,
+      positionBuffer;
+
+  initCanvas()
   startGL()
 
-  function startGL () {
-    var buffers = []
-    var positionAttributeLocation = initShaders()
-    buffers.push(initBuffers(gl, [
-      0, 0,
-      0, 0.5,
-      0.7, 0
-    ], "STATIC_DRAW"))
-    gl.clearColor(0, 0, 0, 0);
-    drawScene(gl, buffers)
+  function initCanvas() {
+    canvas = document.getElementById("canvas");
+    gl = canvas.getContext("webgl");
+    if (!gl) {
+      return;
+    }
   }
 
-  function drawScene(gl, buffers) {
+  function startGL () {
+    initShaders()
+    initBuffers([
+      -0.5, -0.5,
+      0.5, -0.5,
+      -0.5, 0.5,
+      0.5, 0.5
+    ], "STATIC_DRAW")
+    gl.clearColor(0, 0, 0, 0);
+    drawScene()
+  }
+
+  function drawScene() {
     resize(canvas)
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
     gl.clear(gl.COLOR_BUFFER_BIT || gl.DEPTH_BUFFER_BIT)
-    buffers.map((buffer) => {
-      gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
-      gl.vertexAttribPointer(
-        positionAttributeLocation, buffer.size, buffer.type, buffer.normalize, buffer.stride, buffer.offset)
-    })
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
 
   //returns positionBuffer//
-  function initBuffers(gl, data, usage) {
+  function initBuffers(data, usage) {
     positionBuffer = gl.createBuffer()
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl[usage])
-    setBufferProps(positionBuffer, 2, gl.FLOAT, false, 0, 0)
-    return positionBuffer;
+    gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0)
+    gl.enableVertexAttribArray(positionAttributeLocation);
   }
 
-  function setBufferProps(buffer, size, type, normalize, stride, offset) {
-    buffer.size = size
-    buffer.type = type,
-    buffer.normalize = normalize
-    buffer.stride = stride
-    buffer.offset = offset
-  }
-
-  //returns position attribute location//
   function initShaders() {
     var vertexShaderSource = document.getElementById("2d-vertex-shader").text;
     var fragmentShaderSource = document.getElementById("2d-fragment-shader").text;
 
     // create GLSL shaders, upload the GLSL source, compile the shaders
-    var vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-    var fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+    var vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
+    var fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
 
-    var program = createProgram(gl, vertexShader, fragmentShader);
-
+    var program = createProgram(vertexShader, fragmentShader);
     gl.useProgram(program);
 
     positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-    gl.enableVertexAttribArray(positionAttributeLocation);
-    return positionAttributeLocation;
   }
 
-  function createShader(gl, type, source) {
+  function createShader(type, source) {
     var shader = gl.createShader(type);
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
@@ -78,7 +70,7 @@ function main() {
     gl.deleteShader(shader);
   }
 
-  function createProgram(gl, vertexShader, fragmentShader) {
+  function createProgram(vertexShader, fragmentShader) {
     var program = gl.createProgram();
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
