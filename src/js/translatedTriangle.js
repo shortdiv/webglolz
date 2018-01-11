@@ -54,9 +54,17 @@ function main() {
     var program = createProgram(vertexShader, fragmentShader);
     gl.useProgram(program);
 
+    //column major order NOT row major//
+    var translation = new Float32Array([
+      1.0, 0.0, 0.0, 0.0,
+      0.0, 1.0, 0.0, 0.0,
+      0.0, 0.0, 1.0, 0.0,
+      0.5, 0.5, 0.0, 1.0
+    ])
+
     positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-    translationLocation = gl.getUniformLocation(program, "u_translation")
-    gl.uniform4f(translationLocation, -0.5, -0.5, 0.0, 0.0)
+    translationLocation = gl.getUniformLocation(program, "u_translateMatrix")
+    gl.uniformMatrix4fv(translationLocation, false, translation)
   }
 
   function createShader(type, source) {

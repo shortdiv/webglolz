@@ -1,1 +1,1 @@
-require('./rotatedTriangle.js');
+require('./translatedTriangle.js');
