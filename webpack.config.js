@@ -16,7 +16,7 @@ module.exports = {
     }]
   },
   plugins: [new HtmlWebpackPlugin({
-    template: 'src/glsl/triangle.html',
+    template: 'src/glsl/rotatedTriangle.html',
     inject: 'body',
   })],
   devServer: {

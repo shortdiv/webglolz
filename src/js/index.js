@@ -1,1 +1,1 @@
-require('./arrow.js');
+require('./rotatedTriangle.js');
